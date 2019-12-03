@@ -77,8 +77,6 @@ def dailyScratch():
         else:
             last_scratch = datetime.datetime(1970, 1, 1)
 
-        print(last_scratch)
-
         if last_scratch < datetime.datetime.now() - datetime.timedelta(seconds=settings["scratch_time_offset_seconds"]):
             with open(phone_numbers_file, 'r') as f:
                 phone_numbers = json.load(f)
@@ -105,7 +103,7 @@ def dailyScratch():
             with open("settings.json", 'w') as g:
                 json.dump(settings, g)
 
-            print("Waiting for " + str(settings["scratch_time_offset_seconds"] + "seconds"))
+            print("Waiting for " + str(settings["scratch_time_offset_seconds"]) + " seconds")
             time.sleep(settings["scratch_time_offset_seconds"])
         else:
             seconds_till_next_scratch = settings["scratch_time_offset_seconds"] - (datetime.datetime.now() - last_scratch).total_seconds()
