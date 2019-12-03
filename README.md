@@ -1,4 +1,4 @@
 # CirkleKAutoSkrab
-This python program automaticly scratches every day, so you don't have to remember.
+This python program automaticly scratches every day, so you don't have to remember :)
 
-**Currently not working, since the CircleK Skrab campaign isn't running**
+**Working with latest scratch campaign: CirkleK Juleskrab 2019**
