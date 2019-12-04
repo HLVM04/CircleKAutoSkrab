@@ -5,5 +5,7 @@ This python program automaticly scratches every day, so you don't have to rememb
 
 # Requirements
 requests
+
 win10toast
+
 datetime
