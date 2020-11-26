@@ -1,4 +1,4 @@
-import requests, json, argparse
+import requests, json, argparse, os
 
 phoneNumbersFile = 'phonenumbers.json'
 headers = {
@@ -23,8 +23,8 @@ def do2FA(phone_number):
     return response.status_code
 
 
-def addPhoneNumberWith2FACode(phone_number, tfaCode):
-    data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","pid":"' + phone_number + '","permission":false,"referrer":"direct","device":{"brand":"Apple","model":"","browser":"Chrome","browser_version":"87.0","os":"Mac","os_version":"11.0"},"code":' + tfaCode + '}'
+def addPhoneNumberWith2FACode(phone_number, tfa_code):
+    data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","pid":"' + phone_number + '","permission":false,"referrer":"direct","device":{"brand":"Apple","model":"","browser":"Chrome","browser_version":"87.0","os":"Mac","os_version":"11.0"},"code":' + tfa_code + '}'
     response = requests.post('https://skrab.circlek.one/lib/php/login/login.php', headers=headers, data=data)
     if 'error' in response.json():
         print('Error: ' + response.json()['error'])
@@ -35,17 +35,21 @@ def addPhoneNumberWith2FACode(phone_number, tfaCode):
     data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","cid":"' + cid + '"}'
     response = requests.post('https://skrab.circlek.one/lib/php/login/check_login.php', headers=headers, data=data)
 
-    if response.json()['login'] == True:
-        phone_numbers = {}
+    if response.json()['login']:
+        if os.path.exists(phoneNumbersFile):
+            with open(phoneNumbersFile, 'w+') as json_file:
+                json_file.write(json.dumps({}))
+
         with open(phoneNumbersFile) as json_file:
             phone_numbers = json.load(json_file)
-        
+
         phone_numbers.update({phone_number: cid})
 
-        with open(phoneNumbersFile, 'w') as json_file:
+        with open(phoneNumbersFile, 'w+') as json_file:
             json.dump(phone_numbers, json_file)
         
         print('Success adding ' + phone_number + ' with cid ' + cid + ' to database!')
+        return 'success'
 
 
 def addPhoneNumber(phone_number):
@@ -61,13 +65,13 @@ def addPhoneNumber(phone_number):
     addPhoneNumberWith2FACode(phone_number, tfaCode)
 
 
-def most_frequent(List): 
+def most_frequent(list):
     counter = 0
-    num = List[0] 
+    num = list[0]
       
-    for i in List: 
-        curr_frequency = List.count(i) 
-        if(curr_frequency> counter): 
+    for i in list:
+        curr_frequency = list.count(i)
+        if curr_frequency > counter:
             counter = curr_frequency 
             num = i 
   
@@ -75,9 +79,8 @@ def most_frequent(List):
 
 
 def scratchAll():
-    phone_numbers = {}
     with open(phoneNumbersFile) as json_file:
-            phone_numbers = json.load(json_file)
+        phone_numbers = json.load(json_file)
     
     for phone_number, cid in phone_numbers.items():
         data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","cid":"' + cid + '","name":"scratch"}'
@@ -103,17 +106,13 @@ def scratchAll():
         data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","cid":"' + cid + '","name":"scratch","sid":"' + sid + '","time":1606217181}'
         response = requests.post('https://skrab.circlek.one/lib/php/scratch/end.php', headers=headers, data=data)
 
-        if response.json()['success'] == False:
+        if not response.json()['success']:
             print('Error ending the scratch :(')
-
-
-
-
 
 
 def printNumbers():
     with open(phoneNumbersFile) as json_file:
-            print(json.dumps(json.load(json_file), indent=4))
+        print(json.dumps(json.load(json_file), indent=4))
 
 
 if __name__ == "__main__":
@@ -123,7 +122,7 @@ if __name__ == "__main__":
     parser.add_argument('-scratch', action='store_true')
 
     args = parser.parse_args()
-    if args.add != None:
+    if args.add is not None:
         addPhoneNumber(str(args.add))
     
     if args.showNumbers:

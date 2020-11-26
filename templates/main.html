@@ -6,27 +6,33 @@
         var phone_number;
 
         function send2fa() {
+            document.getElementById('phone').disabled = true;
+            document.getElementById('tfaButton').disabled = true;
+
             var phone_number = document.getElementById('phone').value;
-            $.getJSON("/2fa?phone=" + phone_number)
+            //$.getJSON("/2fa?phone=" + phone_number)
+
+            document.getElementById('tfaButton').style.display = "none";
+            document.getElementById('addNumberDiv').style.display = "block";
         }
 
         function addNumber() {
             var phone_number = document.getElementById('phone').value;
             var code = document.getElementById('2faCode').value;
             $.getJSON("/addNumber?phone=" + phone_number + "&code=" + code, function(result) {
-                alert("ok");
+                alert(result);
             });
         }
     </script>
 </head>
 
 <body>
-    <div style="width: 50%; margin: auto; text-align: center;">
+    <div id="tfaDiv" style="width: 50%; margin: auto; text-align: center;">
         <p>Phone number</p>
         <input type="tel" id="phone" pattern="[0-9]{8}" style="width: 100%">
-        <button style="margin: 25px; width: 75%;" type="button" class="btn btn-primary" onclick=send2fa()>Go!</button>
+        <button id="tfaButton" style="margin: 25px; width: 75%;" type="button" class="btn btn-primary" onclick=send2fa()>Go!</button>
     </div>
-    <div style="width: 50%; margin: auto; text-align: center; padding-top: 25px;">
+    <div id="addNumberDiv" style="display: none; width: 50%; margin: auto; text-align: center; padding-top: 25px;">
         <p>2FA Code</p>
         <input type="tel" id="2faCode" pattern="[0-9]{4}" style="width: 100%">
         <button style="margin: 25px; width: 75%;" type="button" class="btn btn-primary" onclick=addNumber()>Go!</button>
