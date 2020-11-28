@@ -20,8 +20,13 @@ def do2FA():
 def addNumber():
     phone_number = request.args.get('phone')
     code = request.args.get('code')
-    scratch.addPhoneNumberWith2FACode(phone_number, code)
-    return jsonify({"test": "yes"})
+    result = scratch.addPhoneNumberWith2FACode(phone_number, code)
+    return jsonify({'Result': result})
+
+
+@app.route('/betingelser')
+def legal():
+    return render_template('legal.html')
 
 
 if __name__ == "__main__":

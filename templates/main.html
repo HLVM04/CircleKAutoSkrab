@@ -8,34 +8,83 @@
         function send2fa() {
             document.getElementById('phone').disabled = true;
             document.getElementById('tfaButton').disabled = true;
+            document.getElementById('tfaButton').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
 
             var phone_number = document.getElementById('phone').value;
-            //$.getJSON("/2fa?phone=" + phone_number)
-
-            document.getElementById('tfaButton').style.display = "none";
-            document.getElementById('addNumberDiv').style.display = "block";
+            $.getJSON("/2fa?phone=" + phone_number, function(result) {
+                if (result == "200") {
+                    document.getElementById('tfaButton').style.display = "none";
+                    document.getElementById('addNumberDiv').style.display = "block";
+                }
+                else {
+                    alert('Det er ikke et 8-cifret nummer');
+                    location.reload();
+                }
+            });
         }
 
         function addNumber() {
             var phone_number = document.getElementById('phone').value;
-            var code = document.getElementById('2faCode').value;
+            var tfaCodeInput = document.getElementById('2faCode');
+            var tfaButton = document.getElementById('addNumberButton')
+            tfaButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+            var code = tfaCodeInput.value;
+            tfaButton.disabled = true
             $.getJSON("/addNumber?phone=" + phone_number + "&code=" + code, function(result) {
-                alert(result);
+                if (result['Result'] == "Error: invalidcode") {
+                    tfaButton.innerHTML = "Prøv igen"
+                    tfaButton.disabled = false
+                    alert('Forkert kode, prøv igen');
+                    tfaCodeInput.value = "";
+                    tfaCodeInput.focus();
+                } else {
+                    document.getElementById('addNumberButton').innerHTML = "Success!";
+                    alert('Dit nummer er nu tilføjet til robottens liste!');
+                    location.reload();
+                }
             });
         }
     </script>
+
+    <style>
+        .box {
+            width: 50%;
+            margin: auto;
+            text-align: center;
+            border-radius: 25px;
+            background-color: white;
+        }
+        .input {
+            text-align: center;
+            width: 80%;
+        }
+    </style>
 </head>
 
-<body>
-    <div id="tfaDiv" style="width: 50%; margin: auto; text-align: center;">
-        <p>Phone number</p>
-        <input type="tel" id="phone" pattern="[0-9]{8}" style="width: 100%">
-        <button id="tfaButton" style="margin: 25px; width: 75%;" type="button" class="btn btn-primary" onclick=send2fa()>Go!</button>
+<body style="background-color: #da291c;">
+    <h1 style="color: white; padding-top: 50px; text-align: center;">CirkleK Auto Skrab - Jul 2020</h1>
+    <p style="text-align: center; padding-bottom: 50px; color: white;">Få en robot til at skrabe for dig - Så du ikke selv behøver at huske det :)</p>
+
+    <div id="tfaDiv" class="box">
+        <p style="font-weight: bold; padding-top: 10px;">Tilføj mobilnummer (Uden +45)</p>
+        <input class="input" type="tel" id="phone" pattern="[0-9]{8}">
+        <button id="tfaButton" style="margin: 25px; width: 75%;" type="button" class="btn btn-primary" onclick=send2fa()>Fortsæt -></button>
+        <div id="addNumberDiv" style="display: none;  padding-top: 25px;">
+            <p>SMS Kode</p>
+            <input class="input" placeholder="****" type="tel" id="2faCode" pattern="[0-9]{4}">
+            <button id="addNumberButton" style="width: 75%;" type="button" class="btn btn-primary" onclick=addNumber()>Tilføj nummer!</button>
+        </div>
+        <p style="font-size: 10px; margin: 25px; padding-bottom: 10px;">Ved at bruge denne gratis service, erkender jeg disse <a href="/betingelser">betingelser</a> </p>
     </div>
-    <div id="addNumberDiv" style="display: none; width: 50%; margin: auto; text-align: center; padding-top: 25px;">
-        <p>2FA Code</p>
-        <input type="tel" id="2faCode" pattern="[0-9]{4}" style="width: 100%">
-        <button style="margin: 25px; width: 75%;" type="button" class="btn btn-primary" onclick=addNumber()>Go!</button>
+
+    <div id="tfaDiv" class="box" style="margin-top: 50px;">
+        <p style="font-weight: bold; padding-top: 10px;">Fjern mobilnummer (Uden +45)</p>
+        <input class="input" type="tel" id="phone" pattern="[0-9]{8}">
+        <button id="tfaButton" style="margin: 25px; width: 75%;" type="button" class="btn btn-danger" onclick=send2fa()>Fjern nummer</button>
+    </div>
+
+    <div class="box" style="margin-top: 50px;">
+        <p>Robotten er Open-Source på <a href="https://github.com/HLVM04/CirkleKAutoSkrab">Github!</a> </p>
     </div>
 </body>
 

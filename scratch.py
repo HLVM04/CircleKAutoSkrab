@@ -16,6 +16,10 @@ headers = {
 
 
 def do2FA(phone_number):
+    if len(phone_number) != 8:
+        print("That's not a danish phone number")
+        return "Error: That's not a danish phone number"
+
     data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","pid":"' + phone_number + '"}'
     response = requests.post('https://skrab.circlek.one/lib/php/login/twofactor.php', headers=headers, data=data)
     print(phone_number)
@@ -28,7 +32,7 @@ def addPhoneNumberWith2FACode(phone_number, tfa_code):
     response = requests.post('https://skrab.circlek.one/lib/php/login/login.php', headers=headers, data=data)
     if 'error' in response.json():
         print('Error: ' + response.json()['error'])
-        return
+        return 'Error: ' + response.json()['error']
 
     cid = response.json()['cid']
 
@@ -49,7 +53,9 @@ def addPhoneNumberWith2FACode(phone_number, tfa_code):
             json.dump(phone_numbers, json_file)
         
         print('Success adding ' + phone_number + ' with cid ' + cid + ' to database!')
-        return 'success'
+        return 'Success'
+    else:
+        return 'Error: Failed login'
 
 
 def addPhoneNumber(phone_number):
