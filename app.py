@@ -24,6 +24,13 @@ def addNumber():
     return jsonify({'Result': result})
 
 
+@app.route('/removeNumber')
+def removeNumber():
+    phone_number = request.args.get('phone')
+    result = scratch.removeNumber(phone_number)
+    return jsonify({'Result': result})
+
+
 @app.route('/betingelser')
 def legal():
     return render_template('legal.html')

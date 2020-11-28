@@ -121,6 +121,23 @@ def printNumbers():
         print(json.dumps(json.load(json_file), indent=4))
 
 
+def removeNumber(phone_number):
+    with open(phoneNumbersFile) as json_file:
+            phone_numbers = json.load(json_file)
+
+    if not phone_number in phone_numbers:
+        return 'Error: invalidnumber'
+
+    del phone_numbers[phone_number]
+
+    with open(phoneNumbersFile, 'w+') as json_file:
+        json.dump(phone_numbers, json_file)
+
+    print('Success removing number ' + phone_number + ' from database!')
+    return 'Success'
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="hmm idk")
     parser.add_argument('-add', type=int)

@@ -43,6 +43,24 @@
                     location.reload();
                 }
             });
+
+        }
+
+        function removeNumber() {
+                var phone_number = document.getElementById('phone_remove').value;
+                var button = document.getElementById('removeButton')
+                button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                $.getJSON("/removeNumber?phone=" + phone_number, function(result) {
+                if (result['Result'] == "Error: invalidnumber") {
+                    alert('Mobilnummeret blev ikke fundet i databasen');
+                    location.reload();
+                } else {
+                    button.innerHTML = "Success!";
+                    alert('Dit nummer er nu fjernet fra robottens liste!');
+                    location.reload();
+                }
+            });
+
         }
     </script>
 
@@ -72,15 +90,15 @@
         <div id="addNumberDiv" style="display: none;  padding-top: 25px;">
             <p>SMS Kode</p>
             <input class="input" placeholder="****" type="tel" id="2faCode" pattern="[0-9]{4}">
-            <button id="addNumberButton" style="width: 75%;" type="button" class="btn btn-primary" onclick=addNumber()>Tilføj nummer!</button>
+            <button id="addNumberButton" style="margin: 25px; width: 75%;" type="button" class="btn btn-primary" onclick=addNumber()>Tilføj nummer!</button>
         </div>
-        <p style="font-size: 10px; margin: 25px; padding-bottom: 10px;">Ved at bruge denne gratis service, erkender jeg disse <a href="/betingelser">betingelser</a> </p>
+        <p style="font-size: 10px; margin-bottom: 10px; padding-bottom: 10px;">Ved at bruge denne gratis service, erkender jeg disse <a href="/betingelser">betingelser</a> </p>
     </div>
 
-    <div id="tfaDiv" class="box" style="margin-top: 50px;">
+    <div id="removeDiv" class="box" style="margin-top: 50px;">
         <p style="font-weight: bold; padding-top: 10px;">Fjern mobilnummer (Uden +45)</p>
-        <input class="input" type="tel" id="phone" pattern="[0-9]{8}">
-        <button id="tfaButton" style="margin: 25px; width: 75%;" type="button" class="btn btn-danger" onclick=send2fa()>Fjern nummer</button>
+        <input class="input" type="tel" id="phone_remove" pattern="[0-9]{8}">
+        <button id="removeButton" style="margin: 25px; width: 75%;" type="button" class="btn btn-danger" onclick=removeNumber()>Fjern nummer</button>
     </div>
 
     <div class="box" style="margin-top: 50px;">
