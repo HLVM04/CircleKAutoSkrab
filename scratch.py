@@ -84,37 +84,50 @@ def most_frequent(list):
     return num 
 
 
+def scratch(phone_number, cid):
+    data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","cid":"' + cid + '","name":"scratch"}'
+    response = requests.post('https://skrab.circlek.one/lib/php/scratch/start.php', headers=headers, data=data)
+
+    if 'error' in response.json():
+        print('Failed to scratch number: ' + phone_number)
+        return
+    
+    if not ('items' in response.json()):
+        print('Phone number ' + phone_number + ' already scratched')
+        return
+
+    sid = response.json()['sid']
+    most_frequent_number = most_frequent(response.json()['items'])
+    count = response.json()['items'].count(most_frequent_number)
+    
+    if count > 2:
+        print("Phone number " + phone_number + " won!")
+    else:
+        print("Phone number " + phone_number + " did not win :(")
+
+    data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","cid":"' + cid + '","name":"scratch","sid":"' + sid + '","time":1606217181}'
+    response = requests.post('https://skrab.circlek.one/lib/php/scratch/end.php', headers=headers, data=data)
+
+    if not response.json()['success']:
+        print('Error ending the scratch :(')
+    
+    if response.json()['turn']['current'] < response.json()['turn']['max']: #Check if we can play another time
+        scratch(phone_number, cid)
+    
+    print('Scratched ' + phone_number)
+
+
 def scratchAll():
     with open(phoneNumbersFile) as json_file:
         phone_numbers = json.load(json_file)
+
+    if len(phone_numbers) <= 0:
+        print("There are no phone numbers in database :(")
+        return
     
     for phone_number, cid in phone_numbers.items():
-        data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","cid":"' + cid + '","name":"scratch"}'
-        response = requests.post('https://skrab.circlek.one/lib/php/scratch/start.php', headers=headers, data=data)
-
-        if 'error' in response.json():
-            print('Failed to scratch number: ' + phone_number)
-            continue
-        
-        if not ('items' in response.json()):
-            print('Phone number ' + phone_number + ' already scratched')
-            continue
-
-        sid = response.json()['sid']
-        most_frequent_number = most_frequent(response.json()['items'])
-        count = response.json()['items'].count(most_frequent_number)
-        
-        if count > 2:
-            print("Phone number " + phone_number + " won!")
-        else:
-            print("Phone number " + phone_number + " did not win :(")
-
-        data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","cid":"' + cid + '","name":"scratch","sid":"' + sid + '","time":1606217181}'
-        response = requests.post('https://skrab.circlek.one/lib/php/scratch/end.php', headers=headers, data=data)
-
-        if not response.json()['success']:
-            print('Error ending the scratch :(')
-
+        scratch(phone_number, cid)
+            
 
 def printNumbers():
     with open(phoneNumbersFile) as json_file:
