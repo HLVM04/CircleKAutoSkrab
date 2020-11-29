@@ -53,6 +53,7 @@ def addPhoneNumberWith2FACode(phone_number, tfa_code):
             json.dump(phone_numbers, json_file)
         
         print('Success adding ' + phone_number + ' with cid ' + cid + ' to database!')
+        scratch(phone_number, cid) # Scratch the new phone number
         return 'Success'
     else:
         return 'Error: Failed login'
@@ -154,12 +155,16 @@ def removeNumber(phone_number):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="hmm idk")
     parser.add_argument('-add', type=int)
+    parser.add_argument('-remove', type=int)
     parser.add_argument('-showNumbers', action='store_true')
     parser.add_argument('-scratch', action='store_true')
 
     args = parser.parse_args()
     if args.add is not None:
         addPhoneNumber(str(args.add))
+    
+    if args.remove is not None:
+        removeNumber(str(args.remove))
     
     if args.showNumbers:
         printNumbers()
