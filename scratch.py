@@ -112,8 +112,9 @@ def scratch(phone_number, cid):
     if not response.json()['success']:
         print('Error ending the scratch :(')
     
-    if response.json()['turn']['current'] < response.json()['turn']['max']: #Check if we can play another time
-        scratch(phone_number, cid)
+    if 'turn' in response.json():
+        if response.json()['turn']['current'] < response.json()['turn']['max']: #Check if we can play another time
+            scratch(phone_number, cid)
     
     print('Scratched ' + phone_number)
 
