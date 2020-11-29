@@ -5,3 +5,4 @@ phonenumbers.json
 *.DS_STORE
 /.idea/
 /__pycache__/
+.vscode/settings.json
