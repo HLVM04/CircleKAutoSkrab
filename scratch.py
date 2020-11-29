@@ -47,7 +47,7 @@ def addPhoneNumberWith2FACode(phone_number, tfa_code):
         with open(phoneNumbersFile) as json_file:
             phone_numbers = json.load(json_file)
 
-        phone_numbers.update({phone_number: cid})
+        phone_numbers[phone_number] = cid
 
         with open(phoneNumbersFile, 'w+') as json_file:
             json.dump(phone_numbers, json_file)
