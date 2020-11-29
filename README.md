@@ -1,6 +1,6 @@
 # CircleKAutoSkrab
 Automatic scratching for CircleK Skrab
-Hosten on: http://www.autoskrab.me/
+Hosten on: https://www.autoskrab.me/
 
 This is probably against the rules of CircleK Skrab, but I made it for fun anyways.
 
