@@ -54,21 +54,7 @@ def addPhoneNumberWith2FACode(phone_number, tfa_code):
     response = requests.post('https://skrab.circlek.one/lib/php/login/check_login.php', headers=headers, data=data)
 
     if response.json()['login']:
-<<<<<<< HEAD
         addPhoneNumberToFile(phone_number, cid)
-=======
-        if os.path.exists(phoneNumbersFile):
-            with open(phoneNumbersFile, 'w+') as json_file:
-                json_file.write(json.dumps({}))
-
-        with open(phoneNumbersFile) as json_file:
-            phone_numbers = json.load(json_file)
-
-        phone_numbers[phone_number] = cid
-
-        with open(phoneNumbersFile, 'w+') as json_file:
-            json.dump(phone_numbers, json_file)
->>>>>>> 317ba52866e1f4881e02f48d563ec24def30bb59
         
         print('Success adding ' + phone_number + ' with cid ' + cid + ' to database!')
         scratch(phone_number, cid) # Scratch the new phone number
