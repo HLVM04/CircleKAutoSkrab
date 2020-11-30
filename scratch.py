@@ -54,9 +54,24 @@ def addPhoneNumberWith2FACode(phone_number, tfa_code):
     response = requests.post('https://skrab.circlek.one/lib/php/login/check_login.php', headers=headers, data=data)
 
     if response.json()['login']:
+<<<<<<< HEAD
         addPhoneNumberToFile(phone_number, cid)
+=======
+        if os.path.exists(phoneNumbersFile):
+            with open(phoneNumbersFile, 'w+') as json_file:
+                json_file.write(json.dumps({}))
+
+        with open(phoneNumbersFile) as json_file:
+            phone_numbers = json.load(json_file)
+
+        phone_numbers[phone_number] = cid
+
+        with open(phoneNumbersFile, 'w+') as json_file:
+            json.dump(phone_numbers, json_file)
+>>>>>>> 317ba52866e1f4881e02f48d563ec24def30bb59
         
         print('Success adding ' + phone_number + ' with cid ' + cid + ' to database!')
+        scratch(phone_number, cid) # Scratch the new phone number
         return 'Success'
     else:
         return 'Error: Failed login'
@@ -115,8 +130,9 @@ def scratch(phone_number, cid):
     if not response.json()['success']:
         print('Error ending the scratch :(')
     
-    if response.json()['turn']['current'] < response.json()['turn']['max']: #Check if we can play another time
-        scratch(phone_number, cid)
+    if 'turn' in response.json():
+        if response.json()['turn']['current'] < response.json()['turn']['max']: #Check if we can play another time
+            scratch(phone_number, cid)
     
     print('Scratched ' + phone_number)
 
@@ -158,12 +174,16 @@ def removeNumber(phone_number):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="hmm idk")
     parser.add_argument('-add', type=int)
+    parser.add_argument('-remove', type=int)
     parser.add_argument('-showNumbers', action='store_true')
     parser.add_argument('-scratch', action='store_true')
 
     args = parser.parse_args()
     if args.add is not None:
         addPhoneNumber(str(args.add))
+    
+    if args.remove is not None:
+        removeNumber(str(args.remove))
     
     if args.showNumbers:
         printNumbers()
