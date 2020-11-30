@@ -27,6 +27,20 @@ def do2FA(phone_number):
     return response.status_code
 
 
+def addPhoneNumberToFile(phone_number, cid):
+    if os.path.exists(phoneNumbersFile):
+        with open(phoneNumbersFile, 'w+') as json_file:
+            json_file.write(json.dumps({}))
+
+    with open(phoneNumbersFile) as json_file:
+        phone_numbers = json.load(json_file)
+
+    phone_numbers[phone_number] = cid
+
+    with open(phoneNumbersFile, 'w+') as json_file:
+        json.dump(phone_numbers, json_file)
+
+
 def addPhoneNumberWith2FACode(phone_number, tfa_code):
     data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","pid":"' + phone_number + '","permission":false,"referrer":"direct","device":{"brand":"Apple","model":"","browser":"Chrome","browser_version":"87.0","os":"Mac","os_version":"11.0"},"code":' + tfa_code + '}'
     response = requests.post('https://skrab.circlek.one/lib/php/login/login.php', headers=headers, data=data)
@@ -40,17 +54,7 @@ def addPhoneNumberWith2FACode(phone_number, tfa_code):
     response = requests.post('https://skrab.circlek.one/lib/php/login/check_login.php', headers=headers, data=data)
 
     if response.json()['login']:
-        if os.path.exists(phoneNumbersFile):
-            with open(phoneNumbersFile, 'w+') as json_file:
-                json_file.write(json.dumps({}))
-
-        with open(phoneNumbersFile) as json_file:
-            phone_numbers = json.load(json_file)
-
-        phone_numbers.update({phone_number: cid})
-
-        with open(phoneNumbersFile, 'w+') as json_file:
-            json.dump(phone_numbers, json_file)
+        addPhoneNumberToFile(phone_number, cid)
         
         print('Success adding ' + phone_number + ' with cid ' + cid + ' to database!')
         return 'Success'
