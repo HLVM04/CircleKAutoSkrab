@@ -28,7 +28,7 @@ def do2FA(phone_number):
 
 
 def addPhoneNumberToFile(phone_number, cid):
-    if os.path.exists(phoneNumbersFile):
+    if not os.path.exists(phoneNumbersFile):
         with open(phoneNumbersFile, 'w+') as json_file:
             json_file.write(json.dumps({}))
 
