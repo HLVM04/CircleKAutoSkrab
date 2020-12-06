@@ -111,9 +111,9 @@ def scratch(phone_number, cid):
         print("Phone number " + phone_number + " did not win :(")
 
     data = '{"id":"L2ZyZ2d2YXRmL3F4X2ZyZ2d2YXRmLmN1Yw==","cid":"' + cid + '","name":"scratch","sid":"' + sid + '","time":1606217181}'
-    response = requests.post('https://skrab.circlek.one/lib/php/scratch/end.php', headers=headers, data=data)
+    end_response = requests.post('https://skrab.circlek.one/lib/php/scratch/end.php', headers=headers, data=data)
 
-    if not response.json()['success']:
+    if not end_response.json()['success']:
         print('Error ending the scratch :(')
     
     if 'turn' in response.json():
